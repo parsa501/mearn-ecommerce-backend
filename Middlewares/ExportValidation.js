@@ -1,14 +1,16 @@
-import jwt from "jsonwebtoken";
+
+import { validationResult } from "express-validator";
+import { HandleERROR } from "vanta-api";
+
 const exportValidation = (req, res, next) => {
-  try {
-    const token = req?.headers?.authorization?.split(" ")[1];
-    const { id = null, confirmPassword = null } = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = id;
-    req.confirmPassword = confirmPassword;
-  } catch (error) {
-    req.userId = null;
-    req.confirmPassword = null;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return next(
+      new HandleERROR(errors.array()[0].msg, 400)
+    );
   }
+
   next();
 };
 
