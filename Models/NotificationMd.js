@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const notificationSchema = new mongoose.Schema(
@@ -30,13 +29,7 @@ const notificationSchema = new mongoose.Schema(
 
     targetType: {
       type: String,
-      enum: [
-        "Product",
-        "Ticket",
-        "SellerApplication",
-        "Payment",
-        "Order",
-      ],
+      enum: ["Product", "Ticket", "SellerApplication", "Payment", "Order"],
     },
 
     isRead: {

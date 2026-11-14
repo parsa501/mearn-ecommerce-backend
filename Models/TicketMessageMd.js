@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const ticketMessageSchema = new mongoose.Schema(
@@ -28,9 +27,6 @@ const ticketMessageSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const TicketMessage = mongoose.model(
-  "TicketMessage",
-  ticketMessageSchema,
-);
+const TicketMessage = mongoose.model("TicketMessage", ticketMessageSchema);
 
 export default TicketMessage;

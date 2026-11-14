@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const CollectionSchema = new mongoose.Schema(

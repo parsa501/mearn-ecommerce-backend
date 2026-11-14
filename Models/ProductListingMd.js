@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const ProductListingSchema = new mongoose.Schema(
@@ -46,9 +45,6 @@ const ProductListingSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const ProductListing = mongoose.model(
-  "ProductListing",
-  ProductListingSchema,
-);
+const ProductListing = mongoose.model("ProductListing", ProductListingSchema);
 
 export default ProductListing;

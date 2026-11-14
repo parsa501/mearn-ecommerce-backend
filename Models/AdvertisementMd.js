@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const advertisementSchema = new mongoose.Schema(

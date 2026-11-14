@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const compareListSchema = new mongoose.Schema(

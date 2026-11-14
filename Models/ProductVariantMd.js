@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const ProductVariantSchema = new mongoose.Schema(
@@ -21,9 +20,6 @@ const ProductVariantSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const ProductVariant = mongoose.model(
-  "ProductVariant",
-  ProductVariantSchema,
-);
+const ProductVariant = mongoose.model("ProductVariant", ProductVariantSchema);
 
 export default ProductVariant;
