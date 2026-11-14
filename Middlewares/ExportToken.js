@@ -1,15 +1,21 @@
-import jwt from "jsonwebtoken";
 const exportToken = (req, res, next) => {
   try {
     const token = req?.headers?.authorization?.split(" ")[1];
-    const { id = null, confirmPassword = null } = jwt.verify(token, process.env.JWT_SECRET);
+
+    const {
+      id = null,
+      role = null,
+    } = jwt.verify(token, process.env.JWT_SECRET);
+
     req.userId = id;
-    req.confirmPassword = confirmPassword;
+    req.role = role;
   } catch (error) {
     req.userId = null;
-    req.confirmPassword = null;
+    req.role = null;
   }
+
   next();
+
 };
 
 export default exportToken;
