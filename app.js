@@ -9,6 +9,7 @@ import exportToken from "./Middlewares/ExportToken.js";
 import userRouter from "./Routes/User.js";
 import authRouter from "./Routes/Auth.js";
 import sellerApplicationRouter from "./Routes/SellerApplication.js";
+import sellerProfileRouter from "./Routes/SellerProfile.js";
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
@@ -24,6 +25,7 @@ app.use("/api/upload", uploadRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/seller-applications", sellerApplicationRouter);
+app.use("/api/seller-profiles", sellerProfileRouter);
 
 app.use((req, res, next) => {
   return next(new HandleERROR("Not Found", 404));
