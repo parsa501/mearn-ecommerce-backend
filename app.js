@@ -7,6 +7,7 @@ import { catchError, HandleERROR } from "vanta-api";
 import uploadRouter from "./Routes/Upload.js";
 import exportToken from "./Middlewares/ExportToken.js";
 import userRouter from "./Routes/User.js";
+import authRouter from "./Routes/Auth.js";
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
@@ -19,6 +20,7 @@ app.use("/uploads", express.static("Public/Uploads"));
 app.use(exportToken);
 
 app.use("/api/upload", uploadRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 
 
