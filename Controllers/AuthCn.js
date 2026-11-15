@@ -1,6 +1,8 @@
 import { catchAsync, HandleERROR } from "vanta-api";
 import User from "../Models/UserMd.js";
 import { sendAuthCode } from "../Utils/SmsHandler.js";
+import jwt from "jsonwebtoken";
+import bcryptjs from "bcryptjs";
 
 export const auth = catchAsync(async (req, res, next) => {
   const { phoneNumber = null } = req.body;
@@ -38,3 +40,56 @@ export const auth = catchAsync(async (req, res, next) => {
       : "send verification code",
   });
 });
+
+
+export const loginWithPassword = catchAsync(async (req, res, next) => {
+  const { phoneNumber = null, password = null } = req.body;
+
+  if (!phoneNumber || !password) {
+    return next(
+      new HandleERROR("Phone number and password are required", 400)
+    );
+  }
+
+  const user = await User.findOne({ phoneNumber });
+
+  if (!user || !user.password) {
+    return next(
+      new HandleERROR("Phone number or password is incorrect", 401)
+    );
+  }
+
+  if (!user.isActive) {
+    return next(new HandleERROR("Your account is inactive", 403));
+  }
+
+  const isMatch = await bcryptjs.compare(password, user.password);
+
+  if (!isMatch) {
+    return next(
+      new HandleERROR("Phone number or password is incorrect", 401)
+    );
+  }
+
+  user.lastLogin = new Date();
+  user.lastSeen = new Date();
+  await user.save();
+
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET
+  );
+
+  const userData = user.toObject();
+  delete userData.password;
+
+  return res.status(200).json({
+    success: true,
+    data: {
+      user: userData,
+      token,
+    },
+    message: "Login successfully",
+  });
+});
+
