@@ -1,5 +1,5 @@
 import ApiFeatures, { catchAsync } from "vanta-api";
-import User from "../Models/UserMd";
+import User from "../Models/UserMd.js";
 import bcryptjs from "bcryptjs";
 
 export const getAll = catchAsync(async (req, res, next) => {
