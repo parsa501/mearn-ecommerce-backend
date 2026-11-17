@@ -126,9 +126,60 @@ export const getOne = catchAsync(async (req, res, next) => {
 });
 export const update = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const { _id, ...updateData } = req.body;
+  const { _id, sellerId, isPublished, ...updateData } = req.body;
 
-  const ProductListing = await ProductListing.findByIdAndUpdate(
+  const isAdmin = req.role === "admin" || req.role === "superAdmin";
+
+  let searchQuery = { _id: id };
+
+  if (!isAdmin) {
+    const sellerProfile = await SellerProfile.findOne({
+      userId: req.userId,
+    });
+
+    if (!sellerProfile) {
+      return next(new HandleERROR("Seller profile not found", 404));
+    }
+
+    searchQuery.sellerId = sellerProfile._id;
+  }
+
+  const productListing = await ProductListing.findOne(searchQuery);
+
+  if (!productListing) {
+    return next(new HandleERROR("Product listing not found", 404));
+  }
+
+  if (updateData.productId) {
+    const product = await Product.findById(updateData.productId);
+
+    if (!product) {
+      return next(new HandleERROR("Product not found", 404));
+    }
+  }
+
+  const productId = updateData.productId || productListing.productId;
+
+  if (updateData.productVariantId) {
+    const productVariant = await ProductVariant.findOne({
+      _id: updateData.productVariantId,
+      productId,
+    });
+
+    if (!productVariant) {
+      return next(new HandleERROR("Product variant not found", 404));
+    }
+  }
+
+  if (updateData.warrantyId) {
+    const warranty = await Warranty.findById(updateData.warrantyId);
+
+    if (!warranty) {
+      return next(new HandleERROR("Warranty not found", 404));
+    }
+  }
+
+  const updatedProductListing = await ProductListing.findByIdAndUpdate(
     id,
     updateData,
     {
@@ -137,29 +188,42 @@ export const update = catchAsync(async (req, res, next) => {
     },
   );
 
-  if (!ProductListing) {
-    return next(new HandleERROR("ProductListing not found", 404));
-  }
-
   return res.status(200).json({
     success: true,
-    data: ProductListing,
-    message: "ProductListing updated successfully",
+    data: updatedProductListing,
+    message: "Product listing updated successfully",
   });
 });
+
 export const remove = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const ProductListing = await ProductListing.findById(id);
+  const isAdmin = req.role === "admin" || req.role === "superAdmin";
 
-  if (!ProductListing) {
-    return next(new HandleERROR("ProductListing not found", 404));
+  let searchQuery = { _id: id };
+
+  if (!isAdmin) {
+    const sellerProfile = await SellerProfile.findOne({
+      userId: req.userId,
+    });
+
+    if (!sellerProfile) {
+      return next(new HandleERROR("Seller profile not found", 404));
+    }
+
+    searchQuery.sellerId = sellerProfile._id;
   }
 
-  await ProductListing.deleteOne();
+  const productListing = await ProductListing.findOne(searchQuery);
+
+  if (!productListing) {
+    return next(new HandleERROR("Product listing not found", 404));
+  }
+
+  await productListing.deleteOne();
 
   return res.status(200).json({
     success: true,
-    message: "ProductListing deleted successfully",
+    message: "Product listing deleted successfully",
   });
 });
