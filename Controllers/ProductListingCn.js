@@ -59,13 +59,32 @@ export const create = catchAsync(async (req, res, next) => {
 });
 
 export const getAll = catchAsync(async (req, res, next) => {
+  const isAdmin = req.role === "admin" || req.role === "superAdmin";
+
+  let manualFilters = {};
+
+  if (!isAdmin) {
+    const sellerProfile = await SellerProfile.findOne({
+      userId: req.userId,
+    });
+
+    if (!sellerProfile) {
+      return next(new HandleERROR("Seller profile not found", 404));
+    }
+
+    manualFilters.sellerId = sellerProfile._id;
+  }
+
   const features = new ApiFeatures(ProductListing, req.query, req.role)
+    .addManualFilters(manualFilters)
     .filter()
     .sort()
     .limitFields()
     .paginate()
     .populate();
+
   const result = await features.execute();
+
   return res.status(200).json(result);
 });
 export const getOne = catchAsync(async (req, res, next) => {
