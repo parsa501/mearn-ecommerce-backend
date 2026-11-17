@@ -23,3 +23,15 @@ export const create = catchAsync(async (req, res, next) => {
     message: "Product created successfully",
   });
 });
+
+export const getAll = catchAsync(async (req, res, next) => {
+  const features = new ApiFeatures(Product, req.query, req.role)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate()
+    .populate()
+  const result = await features.execute();
+
+  return res.status(200).json(result);
+});
