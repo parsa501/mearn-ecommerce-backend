@@ -1,5 +1,5 @@
 import ApiFeatures, { catchAsync, HandleERROR } from "vanta-api";
-import ProductListing from "../Models/ProductListingMd";
+import ProductListing from "../Models/ProductListingMd.js";
 import SellerProfile from "../Models/SellerProfileMd.js";
 import Product from "../Models/ProductMd.js";
 import ProductVariant from "../Models/ProductVariantMd.js";
