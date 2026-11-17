@@ -1,5 +1,7 @@
 import ApiFeatures, { catchAsync, HandleERROR } from "vanta-api";
 import Product from "../Models/ProductMd.js";
+import Order from "../Models/OrderMd.js";
+import Payment from "../Models/PaymentMd.js";
 
 export const create = catchAsync(async (req, res, next) => {
   const {
@@ -91,5 +93,44 @@ export const update = catchAsync(async (req, res, next) => {
     success: true,
     data: product,
     message: "Product updated successfully",
+  });
+});
+
+export const remove = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const product = await Product.findById(id);
+
+  if (!product) {
+    return next(new HandleERROR("Product not found", 404));
+  }
+
+  const orders = await Order.find({
+    "items.productId": id,
+  });
+
+  const orderIds = orders.map((order) => order._id);
+
+  const hasBeenBought = await Payment.exists({
+    orderId: { $in: orderIds },
+    status: "success",
+  });
+
+  if (hasBeenBought) {
+    product.isPublished = false;
+    await product.save();
+
+    return res.status(200).json({
+      success: true,
+      data: product,
+      message: "Product unpublished because it has successful purchases",
+    });
+  }
+
+  await product.deleteOne();
+
+  return res.status(200).json({
+    success: true,
+    message: "Product deleted successfully",
   });
 });
