@@ -90,10 +90,26 @@ export const getAll = catchAsync(async (req, res, next) => {
 export const getOne = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const ProductListing = await ProductListing.findById(id);
+  const isAdmin = req.role === "admin" || req.role === "superAdmin";
 
-  if (!ProductListing) {
-    return next(new HandleERROR("ProductListing not found", 404));
+  let searchQuery = { _id: id };
+
+  if (!isAdmin) {
+    const sellerProfile = await SellerProfile.findOne({
+      userId: req.userId,
+    });
+
+    if (!sellerProfile) {
+      return next(new HandleERROR("Seller profile not found", 404));
+    }
+
+    searchQuery.sellerId = sellerProfile._id;
+  }
+
+  const productListing = await ProductListing.findOne(searchQuery);
+
+  if (!productListing) {
+    return next(new HandleERROR("Product listing not found", 404));
   }
 
   const features = new ApiFeatures(ProductListing, req.query, req.role)
