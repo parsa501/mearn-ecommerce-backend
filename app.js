@@ -11,6 +11,7 @@ import authRouter from "./Routes/Auth.js";
 import sellerApplicationRouter from "./Routes/SellerApplication.js";
 import sellerProfileRouter from "./Routes/SellerProfile.js";
 import addressRouter from "./Routes/Address.js";
+import productRouter from "./Routes/Product.js";
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
@@ -28,6 +29,7 @@ app.use("/api/users", userRouter);
 app.use("/api/seller-applications", sellerApplicationRouter);
 app.use("/api/seller-profiles", sellerProfileRouter);
 app.use("/api/addresses", addressRouter);
+app.use("/api/products", productRouter);
 
 app.use((req, res, next) => {
   return next(new HandleERROR("Not Found", 404));
