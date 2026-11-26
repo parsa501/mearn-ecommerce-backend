@@ -1,5 +1,7 @@
 import ApiFeatures, { catchAsync, HandleERROR } from "vanta-api";
 import Collection from "../Models/CollectionMd.js";
+import fs from "fs";
+import { __dirname } from "../app.js";
 
 export const create = catchAsync(async (req, res, next) => {
   const collection = await Collection.create(req.body);
@@ -61,13 +63,23 @@ export const update = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const { _id, ...updateData } = req.body;
 
+  const oldCollection = await Collection.findById(id);
+
+  if (!oldCollection) {
+    return next(new HandleERROR("Collection not found", 404));
+  }
+
   const collection = await Collection.findByIdAndUpdate(id, updateData, {
     new: true,
     runValidators: true,
   });
 
-  if (!collection) {
-    return next(new HandleERROR("Collection not found", 404));
+  if (
+    updateData.image &&
+    oldCollection.image &&
+    updateData.image !== oldCollection.image
+  ) {
+    fs.unlink(`${__dirname}/Public/Uploads/${oldCollection.image}`, () => {});
   }
 
   return res.status(200).json({
@@ -80,10 +92,16 @@ export const update = catchAsync(async (req, res, next) => {
 export const remove = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const collection = await Collection.findByIdAndDelete(id);
+  const collection = await Collection.findById(id);
 
   if (!collection) {
     return next(new HandleERROR("Collection not found", 404));
+  }
+
+  await Collection.findByIdAndDelete(id);
+
+  if (collection.image) {
+    fs.unlink(`${__dirname}/Public/Uploads/${collection.image}`, () => {});
   }
 
   return res.status(200).json({
