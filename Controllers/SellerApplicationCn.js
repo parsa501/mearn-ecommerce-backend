@@ -1,8 +1,9 @@
-
 import ApiFeatures, { catchAsync, HandleERROR } from "vanta-api";
 import SellerApplication from "../Models/SellerApplicationMd.js";
 import User from "../Models/UserMd.js";
 import SellerProfile from "../Models/SellerProfileMd.js";
+import fs from "fs";
+import { __dirname } from "../app.js";
 
 export const create = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.userId);
@@ -11,8 +12,14 @@ export const create = catchAsync(async (req, res, next) => {
     return next(new HandleERROR("User not found", 404));
   }
 
-  if (user.role === "seller" || user.role === "admin" || user.role === "superAdmin") {
-    return next(new HandleERROR("You are already a seller or administrator", 400));
+  if (
+    user.role === "seller" ||
+    user.role === "admin" ||
+    user.role === "superAdmin"
+  ) {
+    return next(
+      new HandleERROR("You are already a seller or administrator", 400),
+    );
   }
 
   const applicationExist = await SellerApplication.findOne({
@@ -21,7 +28,12 @@ export const create = catchAsync(async (req, res, next) => {
   });
 
   if (applicationExist) {
-    return next(new HandleERROR("You already have an active or approved application", 400));
+    return next(
+      new HandleERROR(
+        "You already have an active or approved application",
+        400,
+      ),
+    );
   }
 
   const application = await SellerApplication.create({
@@ -111,6 +123,8 @@ export const update = catchAsync(async (req, res, next) => {
       documents,
     } = req.body;
 
+    const oldDocuments = [...application.documents];
+
     application.sellerType = sellerType ?? application.sellerType;
     application.storeName = storeName ?? application.storeName;
     application.ownerName = ownerName ?? application.ownerName;
@@ -129,6 +143,16 @@ export const update = catchAsync(async (req, res, next) => {
     application.adminNote = "";
 
     await application.save();
+
+    if (documents) {
+      const removedDocuments = oldDocuments.filter(
+        (file) => !application.documents.includes(file),
+      );
+
+      removedDocuments.forEach((file) => {
+        fs.unlink(`${__dirname}/Public/Uploads/${file}`, () => {});
+      });
+    }
 
     return res.status(200).json({
       success: true,
