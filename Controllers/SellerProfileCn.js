@@ -1,6 +1,7 @@
 import ApiFeatures, { catchAsync, HandleERROR } from "vanta-api";
 import SellerProfile from "../Models/SellerProfileMd.js";
-
+import fs from "fs";
+import { __dirname } from "../app.js";
 export const getAll = catchAsync(async (req, res, next) => {
   const features = new ApiFeatures(SellerProfile, req.query, req.role)
     .filter()
@@ -75,6 +76,9 @@ export const update = catchAsync(async (req, res, next) => {
     status,
   } = req.body;
 
+  const oldStoreLogo = profile.storeLogo;
+  const oldStoreBanner = profile.storeBanner;
+
   profile.storeName = storeName ?? profile.storeName;
   profile.storeDescription = storeDescription ?? profile.storeDescription;
   profile.storeLogo = storeLogo ?? profile.storeLogo;
@@ -96,6 +100,14 @@ export const update = catchAsync(async (req, res, next) => {
   }
 
   await profile.save();
+
+  if (storeLogo && oldStoreLogo && storeLogo !== oldStoreLogo) {
+    fs.unlink(`${__dirname}/Public/Uploads/${oldStoreLogo}`, () => {});
+  }
+
+  if (storeBanner && oldStoreBanner && storeBanner !== oldStoreBanner) {
+    fs.unlink(`${__dirname}/Public/Uploads/${oldStoreBanner}`, () => {});
+  }
 
   return res.status(200).json({
     success: true,
