@@ -2,6 +2,8 @@ import ApiFeatures, { catchAsync, HandleERROR } from "vanta-api";
 import Product from "../Models/ProductMd.js";
 import Order from "../Models/OrderMd.js";
 import Payment from "../Models/PaymentMd.js";
+import fs from "fs";
+import { __dirname } from "../app.js";
 
 export const create = catchAsync(async (req, res, next) => {
   const {
@@ -80,13 +82,27 @@ export const update = catchAsync(async (req, res, next) => {
     ? { _id: id }
     : { _id: id, createdBy: req.userId };
 
-  const product = await Product.findOneAndUpdate(searchQuery, updateData, {
+  const oldProduct = await Product.findOne(searchQuery);
+
+  if (!oldProduct) {
+    return next(new HandleERROR("Product not found", 404));
+  }
+
+  const oldImages = oldProduct.images;
+
+  const product = await Product.findByIdAndUpdate(id, updateData, {
     new: true,
     runValidators: true,
   });
 
-  if (!product) {
-    return next(new HandleERROR("Product not found", 404));
+  if (Array.isArray(updateData.images)) {
+    const removedImages = oldImages.filter(
+      (image) => !product.images.includes(image),
+    );
+
+    removedImages.forEach((image) => {
+      fs.unlink(`${__dirname}/Public/Uploads/${image}`, () => {});
+    });
   }
 
   return res.status(200).json({
@@ -99,7 +115,13 @@ export const update = catchAsync(async (req, res, next) => {
 export const remove = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const product = await Product.findById(id);
+  const isAdmin = req.role === "admin" || req.role === "superAdmin";
+
+  const searchQuery = isAdmin
+    ? { _id: id }
+    : { _id: id, createdBy: req.userId };
+
+  const product = await Product.findOne(searchQuery);
 
   if (!product) {
     return next(new HandleERROR("Product not found", 404));
@@ -128,6 +150,10 @@ export const remove = catchAsync(async (req, res, next) => {
   }
 
   await product.deleteOne();
+
+  product.images.forEach((image) => {
+    fs.unlink(`${__dirname}/Public/Uploads/${image}`, () => {});
+  });
 
   return res.status(200).json({
     success: true,
