@@ -16,6 +16,7 @@ import attributeRouter from "./Routes/Attribute.js";
 import productVariantRouter from "./Routes/ProductVariant.js";
 import variantRouter from "./Routes/Variant.js";
 import productListingRouter from "./Routes/ProductListing.js";
+import collectionRouter from "./Routes/Collection.js";
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
@@ -38,7 +39,7 @@ app.use("/api/attributes", attributeRouter);
 app.use("/api/product-variants", productVariantRouter);
 app.use("/api/variants", variantRouter);
 app.use("/api/product-listings", productListingRouter);
-
+app.use("/api/collections", collectionRouter);
 app.use((req, res, next) => {
   return next(new HandleERROR("Not Found", 404));
 });
