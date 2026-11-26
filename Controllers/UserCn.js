@@ -1,6 +1,8 @@
-import ApiFeatures, { catchAsync } from "vanta-api";
+import ApiFeatures, { catchAsync, HandleERROR } from "vanta-api";
 import User from "../Models/UserMd.js";
 import bcryptjs from "bcryptjs";
+import fs from "fs";
+import { __dirname } from "../app.js";
 
 export const getAll = catchAsync(async (req, res, next) => {
   const features = new ApiFeatures(User, req.query, req.role)
@@ -37,12 +39,14 @@ export const getOne = catchAsync(async (req, res, next) => {
   return res.status(200).json(result);
 });
 
+
 export const update = catchAsync(async (req, res, next) => {
   const {
     fullname = null,
     password = null,
     role = null,
     isActive = null,
+    avatar = null,
   } = req.body;
 
   const { id } = req.params;
@@ -71,6 +75,8 @@ export const update = catchAsync(async (req, res, next) => {
     return next(new HandleERROR("User not found", 404));
   }
 
+  const oldAvatar = user.avatar;
+
   if (fullname !== null) {
     user.fullname = fullname;
   }
@@ -87,7 +93,15 @@ export const update = catchAsync(async (req, res, next) => {
     user.isActive = isActive;
   }
 
+  if (avatar !== null) {
+    user.avatar = avatar;
+  }
+
   const newUser = await user.save();
+
+  if (avatar !== null && oldAvatar && avatar !== oldAvatar) {
+    fs.unlink(`${__dirname}/Public/Uploads/${oldAvatar}`, () => {});
+  }
 
   const userData = newUser.toObject();
   delete userData.password;
@@ -99,3 +113,4 @@ export const update = catchAsync(async (req, res, next) => {
     },
   });
 });
+
