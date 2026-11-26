@@ -20,6 +20,7 @@ import collectionRouter from "./Routes/Collection.js";
 import categoryRouter from "./Routes/Category.js";
 import brandRouter from "./Routes/Brand.js";
 import warrantyRouter from "./Routes/Warranty.js";
+import cartRouter from "./Routes/Cart.js";
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
@@ -46,6 +47,10 @@ app.use("/api/collections", collectionRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/brands", brandRouter);
 app.use("/api/warranties", warrantyRouter);
+app.use("/api/cart", cartRouter);
+
+
+
 app.use((req, res, next) => {
   return next(new HandleERROR("Not Found", 404));
 });
