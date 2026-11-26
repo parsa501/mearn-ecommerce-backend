@@ -36,6 +36,7 @@ const orderSchema = new mongoose.Schema(
     finalPrice: {
       type: Number,
       required: [true, "Final price is required"],
+      min:0
     },
 
     address: {
