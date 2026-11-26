@@ -101,11 +101,15 @@ export const update = catchAsync(async (req, res, next) => {
 
   await profile.save();
 
-  if (storeLogo && oldStoreLogo && storeLogo !== oldStoreLogo) {
+  if (storeLogo !== undefined && oldStoreLogo && storeLogo !== oldStoreLogo) {
     fs.unlink(`${__dirname}/Public/Uploads/${oldStoreLogo}`, () => {});
   }
 
-  if (storeBanner && oldStoreBanner && storeBanner !== oldStoreBanner) {
+  if (
+    storeBanner !== undefined &&
+    oldStoreBanner &&
+    storeBanner !== oldStoreBanner
+  ) {
     fs.unlink(`${__dirname}/Public/Uploads/${oldStoreBanner}`, () => {});
   }
 
