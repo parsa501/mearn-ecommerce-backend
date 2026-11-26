@@ -59,9 +59,9 @@ export const getOne = catchAsync(async (req, res, next) => {
 
 export const update = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const { userId, _id, ...updateData } = req.body;
+  const { _id, ...updateData } = req.body;
 
-  const collection = await Collection.findOneAndUpdate(updateData, {
+  const collection = await Collection.findByIdAndUpdate(id, updateData, {
     new: true,
     runValidators: true,
   });
@@ -80,7 +80,8 @@ export const update = catchAsync(async (req, res, next) => {
 export const remove = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const collection = await collection.findByIdAnddelte(id);
+  const collection = await Collection.findByIdAndDelete(id);
+
   if (!collection) {
     return next(new HandleERROR("Collection not found", 404));
   }
