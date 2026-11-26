@@ -15,7 +15,7 @@ export const getAll = catchAsync(async (req, res, next) => {
   const isAdmin = req.role === "admin" || req.role === "superAdmin";
 
   const features = new ApiFeatures(Collection, req.query, req.role)
-    .addManualFilters(isAdmin)
+    .addManualFilters(isAdmin ? {} : { isActive: true })
     .filter()
     .sort()
     .limitFields()
@@ -65,12 +65,10 @@ export const update = catchAsync(async (req, res, next) => {
 export const remove = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-
-  const collection =await collection.findByIdAnddelte(id)
+  const collection = await collection.findByIdAnddelte(id);
   if (!collection) {
     return next(new HandleERROR("Collection not found", 404));
   }
-
 
   return res.status(200).json({
     success: true,
