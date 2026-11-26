@@ -29,6 +29,21 @@ export const getAll = catchAsync(async (req, res, next) => {
 
 export const getOne = catchAsync(async (req, res, next) => {
   const { id } = req.params;
+
+  const collection = await Collection.findById(id);
+
+  if (!collection) {
+    return next(new HandleERROR("Collection not found", 404));
+  }
+
+  if (
+    !collection.isActive &&
+    req.role !== "admin" &&
+    req.role !== "superAdmin"
+  ) {
+    return next(new HandleERROR("Collection not found", 404));
+  }
+
   const features = new ApiFeatures(Collection, req.query, req.role)
     .addManualFilters({ _id: id })
     .filter()
