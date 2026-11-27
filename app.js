@@ -31,6 +31,9 @@ import commentRouter from "./Routes/Comment.js";
 import advertisementRouter from "./Routes/Advertisement.js";
 import bannerRouter from "./Routes/Banner.js";
 import faqRouter from "./Routes/FAQ.js";
+import serviceRouter from "./Routes/Service.js";
+import contactMessageRouter from "./Routes/ContactMessage.js";
+import storyRouter from "./Routes/Story.js";
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
 const app = express();
@@ -67,6 +70,9 @@ app.use("/api/comments", commentRouter);
 app.use("/api/advertisements", advertisementRouter);
 app.use("/api/banners", bannerRouter);
 app.use("/api/faqs", faqRouter);
+app.use("/api/services", serviceRouter);
+app.use("/api/contact-messages", contactMessageRouter);
+app.use("/api/stories", storyRouter);
 
 app.use((req, res, next) => {
   return next(new HandleERROR("Not Found", 404));
