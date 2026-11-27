@@ -34,6 +34,9 @@ import faqRouter from "./Routes/FAQ.js";
 import serviceRouter from "./Routes/Service.js";
 import contactMessageRouter from "./Routes/ContactMessage.js";
 import storyRouter from "./Routes/Story.js";
+import notificationRouter from "./Routes/Notification.js";
+import ticketMessageRouter from "./Routes/TicketMessage.js";
+import userActivityRouter from "./Routes/UserActivity.js";
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
 const app = express();
@@ -73,6 +76,10 @@ app.use("/api/faqs", faqRouter);
 app.use("/api/services", serviceRouter);
 app.use("/api/contact-messages", contactMessageRouter);
 app.use("/api/stories", storyRouter);
+app.use("/api/notifications", notificationRouter);
+app.use("/api/ticket-messages", ticketMessageRouter);
+app.use("/api/user-activities", userActivityRouter);
+
 
 app.use((req, res, next) => {
   return next(new HandleERROR("Not Found", 404));
