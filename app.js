@@ -26,7 +26,8 @@ import orderRouter from "./Routes/Order.js";
 import shipmentRouter from "./Routes/Shipment.js";
 import paymentRouter from "./Routes/Payment.js";
 import wishlistRouter from "./Routes/Wishlist.js";
-
+import compareListRouter from "./Routes/CompareList.js";
+import commentRouter from "./Routes/Comment.js";
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
 const app = express();
@@ -58,7 +59,8 @@ app.use("/api/orders", orderRouter);
 app.use("/api/shipments", shipmentRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/wishlist", wishlistRouter);
-
+app.use("/api/compare-list", compareListRouter);
+app.use("/api/comments", commentRouter);
 
 app.use((req, res, next) => {
   return next(new HandleERROR("Not Found", 404));
