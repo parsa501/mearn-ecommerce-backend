@@ -21,6 +21,7 @@ import categoryRouter from "./Routes/Category.js";
 import brandRouter from "./Routes/Brand.js";
 import warrantyRouter from "./Routes/Warranty.js";
 import cartRouter from "./Routes/Cart.js";
+import discountRouter from "./Routes/Discount.js";
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
@@ -48,7 +49,7 @@ app.use("/api/categories", categoryRouter);
 app.use("/api/brands", brandRouter);
 app.use("/api/warranties", warrantyRouter);
 app.use("/api/cart", cartRouter);
-
+app.use("/api/discounts", discountRouter);
 
 
 app.use((req, res, next) => {
