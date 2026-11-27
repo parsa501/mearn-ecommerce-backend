@@ -37,6 +37,7 @@ import storyRouter from "./Routes/Story.js";
 import notificationRouter from "./Routes/Notification.js";
 import ticketMessageRouter from "./Routes/TicketMessage.js";
 import userActivityRouter from "./Routes/UserActivity.js";
+import searchRouter from "./Routes/Search.js";
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
 const app = express();
@@ -79,7 +80,7 @@ app.use("/api/stories", storyRouter);
 app.use("/api/notifications", notificationRouter);
 app.use("/api/ticket-messages", ticketMessageRouter);
 app.use("/api/user-activities", userActivityRouter);
-
+app.use("/api/search", searchRouter);
 
 app.use((req, res, next) => {
   return next(new HandleERROR("Not Found", 404));
