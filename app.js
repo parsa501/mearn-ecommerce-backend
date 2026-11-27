@@ -23,6 +23,8 @@ import warrantyRouter from "./Routes/Warranty.js";
 import cartRouter from "./Routes/Cart.js";
 import discountRouter from "./Routes/Discount.js";
 import orderRouter from "./Routes/Order.js";
+import shipmentRouter from "./Routes/Shipment.js";
+import paymentRouter from "./Routes/Payment.js";
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
@@ -52,6 +54,8 @@ app.use("/api/warranties", warrantyRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/discounts", discountRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/shipments", shipmentRouter);
+app.use("/api/payments", paymentRouter);
 
 app.use((req, res, next) => {
   return next(new HandleERROR("Not Found", 404));
