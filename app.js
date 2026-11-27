@@ -22,6 +22,7 @@ import brandRouter from "./Routes/Brand.js";
 import warrantyRouter from "./Routes/Warranty.js";
 import cartRouter from "./Routes/Cart.js";
 import discountRouter from "./Routes/Discount.js";
+import orderRouter from "./Routes/Order.js";
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
@@ -50,7 +51,7 @@ app.use("/api/brands", brandRouter);
 app.use("/api/warranties", warrantyRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/discounts", discountRouter);
-
+app.use("/api/orders", orderRouter);
 
 app.use((req, res, next) => {
   return next(new HandleERROR("Not Found", 404));
