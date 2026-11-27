@@ -30,6 +30,7 @@ import compareListRouter from "./Routes/CompareList.js";
 import commentRouter from "./Routes/Comment.js";
 import advertisementRouter from "./Routes/Advertisement.js";
 import bannerRouter from "./Routes/Banner.js";
+import faqRouter from "./Routes/FAQ.js";
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
 const app = express();
@@ -65,6 +66,7 @@ app.use("/api/compare-list", compareListRouter);
 app.use("/api/comments", commentRouter);
 app.use("/api/advertisements", advertisementRouter);
 app.use("/api/banners", bannerRouter);
+app.use("/api/faqs", faqRouter);
 
 app.use((req, res, next) => {
   return next(new HandleERROR("Not Found", 404));
